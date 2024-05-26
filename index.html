@@ -187,19 +187,19 @@
       for (let b = 0; b < bricks[r].length; b++) {
         const brick = bricks[r][b];
         if (brick.status == 1) {
-          if (x + dx > brick.x && x + dx < brick.x + brick.width && y + dy > brick.y && y + dy < brick.y + brick.height) {
-            brick.status = 0;
-            score += 5 + Math.floor(Math.random() * 6);
-            
+          // Check for collision with the brick
+          if (x + ballRadius > brick.x && x - ballRadius < brick.x + brick.width && y + ballRadius > brick.y && y - ballRadius < brick.y + brick.height) {
             // Determine the side of collision
-            if (x + dx > brick.x && x + dx < brick.x + brick.width) {
-              dy = -dy; // Hit the top or bottom of the brick
-            } else {
-              dx = -dx; // Hit the left or right of the brick
+            if (x + ballRadius - dx <= brick.x || x - ballRadius - dx >= brick.x + brick.width) {
+              dx = -dx; // Reverse horizontal direction
             }
-
+            if (y + ballRadius - dy <= brick.y || y - ballRadius - dy >= brick.y + brick.height) {
+              dy = -dy; // Reverse vertical direction
+            }
+            
+            brick.status = 0; // Remove the brick
+            score += 5 + Math.floor(Math.random() * 6);
             increaseSpeed();
-
             if (checkAllBricksCleared()) {
               level++;
               resetBall();
@@ -208,7 +208,6 @@
               dy *= 1.2;
               countdownNextLevel();
             }
-
             return; // Ensure the ball only hits one brick at a time
           }
         }
